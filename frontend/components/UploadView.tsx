@@ -216,10 +216,10 @@ export default function UploadView({ id }: { id: string }) {
               <span className="pct">{data.progress}%</span>
               <span className="muted">
                 {data.total_chunks > 0 && data.status === "transcribing"
-                  ? `${data.completed_chunks}/${data.total_chunks} parts done · `
+                  ? `${data.completed_chunks} of ${data.total_chunks} parts done, `
                   : ""}
-                elapsed {fmtDuration(elapsedSec)}
-                {eta ? ` · about ${eta} left` : ""}
+                {fmtDuration(elapsedSec)} elapsed
+                {eta ? `, about ${eta} left` : ""}
               </span>
             </div>
             <div
@@ -263,7 +263,7 @@ export default function UploadView({ id }: { id: string }) {
           )}
           {!running && (
             <button
-              className="btn btn-danger"
+              className="btn btn-danger-ghost"
               disabled={busy !== null}
               onClick={() => {
                 if (window.confirm(`Delete “${data.filename}”? The audio, transcript and summary will be removed permanently.`)) {
@@ -287,20 +287,14 @@ export default function UploadView({ id }: { id: string }) {
             summary={summaryBusy ? null : data.summary}
             hasTranscript={!!data.transcript}
             pending={!!summaryBusy}
+            onDownload={
+              data.summary?.kind === "ok"
+                ? () => downloadText(`${data.filename}-summary.txt`, summaryToText(data.summary as Summary))
+                : undefined
+            }
             regenerating={busy === "summary" || data.status !== "completed"}
             onRegenerate={() => run("summary", () => resummarizeUpload(id))}
           />
-          {data.summary?.kind === "ok" && (
-            <div className="row">
-              <button
-                className="btn btn-ghost"
-                onClick={() => downloadText(`${data.filename}-summary.txt`, summaryToText(data.summary as Summary))}
-              >
-                Download summary .txt
-              </button>
-            </div>
-          )}
-
           <section className="card">
             <div className="row spread">
               <h2>Transcript</h2>

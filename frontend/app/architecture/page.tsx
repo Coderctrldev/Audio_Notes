@@ -1,7 +1,7 @@
 import Mermaid from "@/components/Mermaid";
 
 const GITHUB_URL =
-  process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com/YOUR-USERNAME/audio-notes";
+  process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com/Coderctrldev/Audio_Notes";
 
 export const metadata = { title: "Architecture · Audio Notes" };
 

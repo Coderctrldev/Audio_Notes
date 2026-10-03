@@ -91,11 +91,21 @@ export default function UploadForm() {
           onChange={(e) => pick(e.target.files?.[0])}
         />
         {file ? (
-          <p>
+          <p className="drop-file">
             <strong>{file.name}</strong> <span className="muted">({formatSize(file.size)})</span>
           </p>
         ) : (
-          <p className="muted">Drop an audio file here or click to choose ({ALLOWED_EXT.join(" ")})</p>
+          <>
+            <svg className="drop-icon" width="32" height="28" viewBox="0 0 26 22" fill="currentColor" aria-hidden="true">
+              <rect x="1" y="8" width="3" height="6" rx="1.5" />
+              <rect x="6.5" y="3" width="3" height="16" rx="1.5" />
+              <rect x="12" y="0" width="3" height="22" rx="1.5" />
+              <rect x="17.5" y="5" width="3" height="12" rx="1.5" />
+              <rect x="23" y="9" width="3" height="4" rx="1.5" />
+            </svg>
+            <p className="drop-title">Drop an audio file here</p>
+            <p className="drop-sub">or click to choose a file ({ALLOWED_EXT.join(", ")})</p>
+          </>
         )}
       </div>
 
@@ -120,7 +130,7 @@ export default function UploadForm() {
         )}
       </div>
 
-      <p className="muted">
+      <p className="muted form-note">
         Choose the language that is actually spoken in the recording. Mixed or unsupported languages
         may give a poor transcript.
       </p>

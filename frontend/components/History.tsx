@@ -85,7 +85,7 @@ export default function History() {
   }
 
   return (
-    <section className="card">
+    <section className="section">
       <div className="row spread">
         <h2>Past uploads</h2>
         {finished.length > 1 && (
@@ -127,11 +127,13 @@ export default function History() {
               <li key={u.id}>
                 <div className="item">
                   <Link href={`/uploads/${u.id}`} className="item-main">
-                    <span className="name">{u.filename}</span>
+                    <span className="item-text">
+                      <span className="name">{u.filename}</span>
+                      <span className="muted">{new Date(u.created_at).toLocaleString()}</span>
+                    </span>
                     <span className="meta">
                       {isActive(u.status) && <span className="pct-sm">{u.progress}%</span>}
                       <StatusBadge status={u.status} />
-                      <span className="muted">{new Date(u.created_at).toLocaleString()}</span>
                     </span>
                   </Link>
                   <div className="item-actions">

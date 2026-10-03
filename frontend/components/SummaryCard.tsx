@@ -47,12 +47,14 @@ export default function SummaryCard({
   regenerating,
   hasTranscript,
   pending,
+  onDownload,
 }: {
   summary: Summary | null;
   onRegenerate: () => void;
   regenerating: boolean;
   hasTranscript: boolean;
   pending?: boolean;
+  onDownload?: () => void;
 }) {
   const [copied, setCopied] = useState(false);
   const ok = summary?.kind === "ok";
@@ -77,6 +79,11 @@ export default function SummaryCard({
           {ok && (
             <button className="btn btn-ghost" onClick={copy}>
               {copied ? "Copied" : "Copy"}
+            </button>
+          )}
+          {ok && onDownload && (
+            <button className="btn btn-ghost" onClick={onDownload}>
+              Download
             </button>
           )}
           {canRegenerate && (
