@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: notes
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d notes"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7
+
+  # S3-compatible storage. MinIO stopped publishing images (Docker Hub and quay.io both 401),
+  # so local dev uses SeaweedFS. App code is unchanged: it only speaks S3 via boto3.
+  s3:
+    image: chrislusf/seaweedfs
+    command: server -dir=/data -s3 -s3.config=/etc/seaweedfs/s3.json
+    ports: ["8333:8333"]
+    volumes:
+      - s3data:/data
+      - ./s3.json:/etc/seaweedfs/s3.json:ro
+
+  api:
+    build: .
+    env_file: .env
+    ports: ["8000:8000"]
+    restart: on-failure
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_started }
+      s3: { condition: service_started }
+
+  worker:
+    build: .
+    command: sh -c 'rq worker audio_tasks --url "$REDIS_URL"'
+    env_file: .env
+    restart: on-failure
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_started }
+      s3: { condition: service_started }
+
+volumes:
+  pgdata: {}
+  s3data: {}
